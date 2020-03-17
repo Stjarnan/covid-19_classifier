@@ -44,7 +44,7 @@ for imagePath in imagePaths:
     # swap channels & resize to a fixed size
     # (our CNN wants 244x244 inputs)
     image = cv2.imread(imagePath)
-    image = cv2.cvtColor(image, cv2.color_BGR2RGB)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     image = cv2.resize(image, (224, 224))
 
     # update data and label list
