@@ -133,7 +133,7 @@ plt.title("Training Loss and Accuracy on COVID-19 Dataset")
 plt.xlabel("Epoch #")
 plt.ylabel("Loss/Accuracy")
 plt.legend(loc="lower left")
-plt.savefig(args["plot"])
+plt.savefig(args["plotpath"])
 
 # serialize the model to disk
 print("Saving COVID-19 model..")
