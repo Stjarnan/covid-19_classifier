@@ -9,6 +9,7 @@ dataset/
 # floyd
 floyd.yml
 .floyd*
+floyd_requirements.txt
 
 # C extensions
 *.so
