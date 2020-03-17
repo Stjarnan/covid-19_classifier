@@ -6,6 +6,10 @@ __pycache__/
 # Dataset
 dataset/
 
+# floyd
+floyd.yml
+.floyd*
+
 # C extensions
 *.so
 
