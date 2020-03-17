@@ -121,3 +121,21 @@ print("accuracy: {:.4f}".format(accuracy))
 print("sensitivity: {:.4f}".format(sensitivity))
 print("specificity: {:.4f}".format(specificity))
 
+# Plot the loss and accuracy
+eps = EPOCHS
+plt.style.use("ggplot")
+plt.figure()
+plt.plot(np.arange(0, eps), H.history["loss"], label="train_loss")
+plt.plot(np.arange(0, eps), H.history["val_loss"], label="val_loss")
+plt.plot(np.arange(0, eps), H.history["accuracy"], label="train_acc")
+plt.plot(np.arange(0, eps), H.history["val_accuracy"], label="val_acc")
+plt.title("Training Loss and Accuracy on COVID-19 Dataset")
+plt.xlabel("Epoch #")
+plt.ylabel("Loss/Accuracy")
+plt.legend(loc="lower left")
+plt.savefig(args["plot"])
+
+# serialize the model to disk
+print("Saving COVID-19 model..")
+model.save(args["model"], save_format="h5")
+print("Finished!")
