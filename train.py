@@ -85,3 +85,39 @@ model = Model(inputs=vgg16.input, outputs=model_top)
 # Freeze layers from vgg16
 for layer in vgg16.layers:
     layer.trainable = False
+
+print("Compiling model..")
+opt = Adam(lr=BASE_LEARNING_RATE, decay=BASE_LEARNING_RATE / EPOCHS)
+model.compile(loss="binary_crossentropy", optimizer=opt, metrics=["accuracy"])
+
+# fine-tune model
+print("Fine-tuning model")
+H = model.fit_generator(
+    aug.flow(trainX, trainY, batch_size=BATCH_SIZE),
+    steps_per_epoch=len(trainX) // BATCH_SIZE,
+    validation_data=(testX, trainX),
+    validation_steps=len(testX) // BATCH_SIZE,
+    epochs=EPOCHS)
+
+# Eval model
+print("Evaluating model..")
+pred = model.predict(testX, batch_size=BATCH_SIZE)
+
+# find index of label with largest predicted probability
+pred = np.argmax(pred, axis=1)
+print(classification_report(testY.argmax(axis=1), pred,
+    target_names=lb.classes_))
+
+# confusion matrix
+cm = confusion_matrix(testY.argmax(axis=1), pred)
+total = sum(sum(cm))
+accuracy = (cm[0, 0] + cm[1, 1]) / total
+sensitivity = cm[0, 0] / (cm[0, 0] + cm[0, 1])
+specificity = cm[1, 1] / (cm[1, 0] + cm[1, 1])
+
+# show the confusion matrix, accuracy, sensitivity, and specificity
+print(cm)
+print("accuracy: {:.4f}".format(accuracy))
+print("sensitivity: {:.4f}".format(sensitivity))
+print("specificity: {:.4f}".format(specificity))
+
