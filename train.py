@@ -95,7 +95,7 @@ print("Fine-tuning model")
 H = model.fit_generator(
     aug.flow(trainX, trainY, batch_size=BATCH_SIZE),
     steps_per_epoch=len(trainX) // BATCH_SIZE,
-    validation_data=(testX, trainX),
+    validation_data=(testX, testY),
     validation_steps=len(testX) // BATCH_SIZE,
     epochs=EPOCHS)
 
