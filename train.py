@@ -67,3 +67,21 @@ labels = to_categorical(labels)
 # augment data
 aug = ImageDataGenerator(rotation_range=10, fill_mode="nearest")
 
+# load VGG16 model (for fine-tuning)
+vgg16 = VGG16(weights="imagenet", include_top=False,
+    input_tensor=Input(shape=(224, 224, 3)))
+
+# new top for the model to fine-tune on
+model_top = vgg16.output
+model_top = AveragePooling2D(pool_size=(4,4))(model_top)
+model_top = Flatten(name="flatten")(model_top)
+model_top = Dense(64, activation="relu")(model_top)
+model_top = Dropout(0.5)(model_top)
+model_top = Dense(2, activation="softmax")(model_top)
+
+# Connect vgg16 with new top
+model = Model(inputs=vgg16.input, outputs=model_top)
+
+# Freeze layers from vgg16
+for layer in vgg16.layers:
+    layer.trainable = False
