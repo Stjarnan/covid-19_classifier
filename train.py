@@ -23,3 +23,47 @@ parser.add_argument("-p", "--plotpath", type=str, default="plot.png",
 parser.add_argument("-m", "--model", default="covid19.model",
                     help="Path to output model, include filename")
 args = vars(parser.parse_args())
+
+# Init base hyperparameters
+BASE_LEARNING_RATE = 1e-3
+EPOCHS = 25
+BATCH_SIZE = 8
+
+# Load dataset and create label and data lists
+print("Loading dataset..")
+imagePaths = list(paths.list_images(args["dataset"]))
+data = []
+labels = []
+
+# loop over paths,
+#   extract label and data
+for imagePath in imagePaths:
+    
+    label = imagePath.split(os.path.sep)[-2]
+
+    # swap channels & resize to a fixed size
+    # (our CNN wants 244x244 inputs)
+    image = cv2.imread(imagePath)
+    image = cv2.cvtColor(image, cv2.color_BGR2RGB)
+    image = cv2.resize(image, (224, 224))
+
+    # update data and label list
+    data.append(image)
+    labels.append(label)
+
+# scale pixel intensities of the images
+# convert both lists to Numpy arrays
+data = np.array(data) / 255
+labels = np.array(labels)
+
+# label OH-encoding
+lb = LabelBinarizer()
+labels = lb.fit_transform(labels)
+labels = to_categorical(labels)
+
+(trainX, testX, trainY, testY) = train_test_split(data, labels, 
+    test_size=0.2, stratify=labels, random_state=1)
+
+# augment data
+aug = ImageDataGenerator(rotation_range=10, fill_mode="nearest")
+
